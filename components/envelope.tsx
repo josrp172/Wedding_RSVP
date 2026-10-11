@@ -46,22 +46,36 @@ export function Envelope() {
     busy.current = true;
     music.start(); // must happen inside the tap for browsers to allow audio
 
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const finish = () => {
+      window.scrollTo({ top: 0 });
       open();
+    };
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      finish();
       return;
     }
 
-    animate("[data-hint]", { opacity: 0, y: 10 }, { duration: 0.5 });
-    setBurst(true);
-    await animate("[data-seal]", { scale: [1, 1.15, 0.2], opacity: [1, 1, 0], rotate: [0, -10, 15] }, { duration: 0.7, ease: silk });
-    await animate("[data-flap]", { rotateX: 180 }, { duration: 0.9, ease: [0.65, 0, 0.35, 1] });
-    animate("[data-flap]", { zIndex: 1 }, { duration: 0 });
-    animate("[data-envelope]", { y: 90 }, { duration: 1.4, ease: silk });
-    await animate("[data-letter]", { y: "-62%" }, { duration: 1.4, ease: silk });
-    await animate("[data-letter-text]", { opacity: 1, filter: "blur(0px)" }, { duration: 0.8 });
-    await wait(1200);
-    window.scrollTo({ top: 0 });
-    open();
+    // Failsafe: whatever happens to the animation, the invitation always opens.
+    const failsafe = setTimeout(finish, 7000);
+    // Each step waits for its animation, but never longer than it should take.
+    const step = (animation: { then: (done: () => void) => unknown }, ms: number) =>
+      Promise.race([new Promise<void>((done) => void animation.then(done)), wait(ms + 250)]);
+
+    try {
+      animate("[data-hint]", { opacity: 0, y: 10 }, { duration: 0.5 });
+      setBurst(true);
+      await step(animate("[data-seal]", { scale: [1, 1.15, 0.2], opacity: [1, 1, 0], rotate: [0, -10, 15] }, { duration: 0.7, ease: silk }), 700);
+      await step(animate("[data-flap]", { rotateX: 180 }, { duration: 0.9, ease: [0.65, 0, 0.35, 1] }), 900);
+      animate("[data-flap]", { zIndex: 1 }, { duration: 0 });
+      animate("[data-envelope]", { y: 90 }, { duration: 1.4, ease: silk });
+      await step(animate("[data-letter]", { y: "-62%" }, { duration: 1.4, ease: silk }), 1400);
+      await step(animate("[data-letter-text]", { opacity: 1, filter: "blur(0px)" }, { duration: 0.8 }), 800);
+      await wait(1200);
+    } finally {
+      clearTimeout(failsafe);
+      finish();
+    }
   }
 
   return (
@@ -157,7 +171,7 @@ export function Envelope() {
                 data-seal
                 type="button"
                 onClick={handleOpen}
-                className="absolute top-[60%] left-1/2 z-[5] grid h-[4.8rem] w-[4.8rem] cursor-pointer place-items-center rounded-full"
+                className="absolute top-[60%] left-1/2 z-[5] grid h-[4.8rem] w-[4.8rem] cursor-pointer place-items-center rounded-full transition-[scale] duration-300 hover:scale-[1.07] active:scale-95"
                 style={{
                   x: "-50%",
                   y: "-50%",
@@ -166,8 +180,6 @@ export function Envelope() {
                     "inset 0 2px 4px rgba(255,255,255,0.3), inset 0 -4px 8px rgba(0,0,0,0.28), 0 8px 18px -4px rgba(110,35,64,0.55)",
                   borderRadius: "52% 48% 50% 50% / 50% 52% 48% 50%",
                 }}
-                whileHover={{ scale: 1.07 }}
-                whileTap={{ scale: 0.94 }}
                 aria-label="Open the invitation"
               >
                 <span className="absolute inset-[7px] rounded-full border border-white/25" />
