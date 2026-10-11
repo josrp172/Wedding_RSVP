@@ -1,0 +1,219 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-display: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  --font-script: var(--font-pinyon), "Pinyon Script", cursive;
+  --font-sans: var(--font-jost), "Jost", system-ui, sans-serif;
+}
+
+@theme {
+  --color-paper: #fcf2f2;
+  --color-paper-deep: #f8e4e6;
+  --color-card: #fffafa;
+  --color-ink: #3e1f2c;
+  --color-ink-soft: #7b5662;
+  --color-ink-faint: #a98b95;
+  --color-blush: #f6d3da;
+  --color-rose-soft: #e3a3b4;
+  --color-rose: #cf6f8c;
+  --color-berry: #9b3a5c;
+  --color-wine: #2f1520;
+  --color-gold: #b98a58;
+  --color-gold-soft: #ecd0a7;
+  --color-line: rgb(62 31 44 / 0.13);
+
+  --ease-silk: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-weight: 300;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+/* Fine paper grain over everything — pure SVG, no images. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 60;
+  opacity: 0.35;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.4 0 0 0 0 0.25 0 0 0 0 0.3 0 0 0 0.08 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+::selection {
+  background: var(--color-blush);
+  color: var(--color-ink);
+}
+
+section[id] {
+  scroll-margin-top: 4.5rem;
+}
+
+:focus-visible {
+  outline: 1.5px solid var(--color-gold);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Small caps label used across sections */
+.eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+}
+
+/* Slow drifting light behind the hero */
+@keyframes drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(4%, -3%, 0) scale(1.08);
+  }
+}
+
+.aurora {
+  animation: drift 18s var(--ease-silk) infinite;
+}
+.aurora-delayed {
+  animation: drift 24s var(--ease-silk) infinite reverse;
+}
+
+/* Falling petals */
+@keyframes petal-fall {
+  0% {
+    transform: translate3d(0, -10vh, 0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: var(--petal-opacity, 0.6);
+  }
+  90% {
+    opacity: var(--petal-opacity, 0.6);
+  }
+  100% {
+    transform: translate3d(var(--petal-drift, 40px), 110vh, 0) rotate(var(--petal-spin, 320deg));
+    opacity: 0;
+  }
+}
+
+@keyframes petal-sway {
+  0%,
+  100% {
+    transform: translateX(0) rotate(-12deg);
+  }
+  50% {
+    transform: translateX(28px) rotate(18deg);
+  }
+}
+
+.petal {
+  position: absolute;
+  top: 0;
+  animation: petal-fall var(--petal-duration, 16s) linear infinite;
+  animation-delay: var(--petal-delay, 0s);
+  will-change: transform;
+}
+.petal > i {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 80% 0 80% 0;
+  background: currentColor;
+  animation: petal-sway calc(var(--petal-duration, 16s) / 3) ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora,
+  .aurora-delayed,
+  .petal,
+  .petal > i {
+    animation: none !important;
+  }
+  .petal {
+    display: none;
+  }
+}
+
+/* The envelope intro is hidden instantly for guests who already opened it this session. */
+html[data-opened] .envelope-overlay {
+  display: none;
+}
+
+/* Form fields */
+.field {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--color-line);
+  padding: 0.7rem 0 0.6rem;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  color: var(--color-ink);
+  border-radius: 0;
+  transition: border-color 0.4s var(--ease-silk);
+}
+.field::placeholder {
+  color: var(--color-ink-faint);
+  opacity: 0.7;
+}
+.field:focus {
+  outline: none;
+  border-color: var(--color-gold);
+}
+.field[aria-invalid="true"] {
+  border-color: var(--color-rose);
+}
+textarea.field {
+  resize: vertical;
+  min-height: 5.5rem;
+  line-height: 1.5;
+}
+
+/* Wishes wall marquee */
+@keyframes marquee-left {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.marquee-track {
+  animation: marquee-left var(--marquee-duration, 60s) linear infinite;
+}
+.marquee-track[data-reverse] {
+  animation-direction: reverse;
+}
+.marquee-pause:hover .marquee-track {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+}

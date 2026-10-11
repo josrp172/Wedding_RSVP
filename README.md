@@ -1,0 +1,32 @@
+# Wedding website + RSVP
+
+A cinematic, mobile-first wedding site with an RSVP guest list. Built with Next.js 16 (App Router, Server Actions), React 19, Motion 14, Tailwind CSS 4 and Upstash Redis.
+
+**What guests get:** a wax-sealed envelope intro (with a personal greeting via `?to=Name`) and soft music, a full-screen prenup video hero, the love story with polaroid photos, a scroll-expanding prenup film with a chaptered player, a behind-the-scenes video reel, a photo gallery with a swipeable lightbox, venues with an illustrated route map, a sunset-to-starlight timeline of the day, illustrated outfits that recolour to the palette, entourage tabs, travel tips with a packing checklist, a gift envelope, a wishes wall, searchable FAQs and a three-step RSVP.
+
+**What you get:** a password-protected guest list at `/admin` with headcount and CSV export.
+
+## Make it yours
+
+Nearly everything lives in **`content/wedding.ts`**: names, dates, story, venues, schedule, attire palette, entourage, FAQ, music, photos and videos.
+
+- **Photos & videos:** the samples are free stock (photos from [Unsplash](https://unsplash.com/license), videos and music from [Mixkit](https://mixkit.co/license/)). Swap in your own prenup files before going live: put them in `public/photos` / `public/videos` and use paths like `"/photos/01.jpg"`. Keep videos at about 720p and 2–4 MB each.
+- **Personal invite links:** `https://your-site.vercel.app/?to=Tita%20Rosa` greets that guest by name on the envelope and letter, and pre-fills their RSVP.
+
+## Run locally
+
+```bash
+npm install
+npm run dev
+```
+
+Locally, RSVPs are saved to `.data/rsvps.json`. To open `/admin`, create `.env.local` containing `ADMIN_PASSWORD=...`.
+
+## Deploy to Vercel
+
+1. Push this folder to a GitHub repo and import it in Vercel. The framework is detected automatically.
+2. **Storage (required for RSVPs):** in the Vercel project, go to **Storage → Marketplace → Upstash for Redis → Create & connect**. The free tier is plenty. This adds `KV_REST_API_URL` / `KV_REST_API_TOKEN` automatically.
+3. **Settings → Environment Variables:** add `ADMIN_PASSWORD` (long and private). You can also add `NEXT_PUBLIC_SITE_URL` with your final domain.
+4. Redeploy. Then open `/admin` to see responses.
+
+The site isn't indexed by search engines (`allowIndexing: false` in the config).
