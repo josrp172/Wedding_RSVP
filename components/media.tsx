@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 
 const isUnsplash = (src: string) => src.startsWith("https://images.unsplash.com/");
@@ -8,6 +8,24 @@ const isUnsplash = (src: string) => src.startsWith("https://images.unsplash.com/
 /** Builds a sized URL for Unsplash; local/other images are used as-is. */
 export function photoUrl(src: string, width: number) {
   return isUnsplash(src) ? `${src}?auto=format&fit=crop&w=${width}&q=78` : src;
+}
+
+/** Local clips ship with a first-frame poster next to them: /videos/hero.mp4 → /videos/hero.jpg */
+export const posterFor = (src: string) => (src.startsWith("/") ? src.replace(/\.mp4$/, ".jpg") : undefined);
+
+const portraitQuery = "(orientation: portrait) and (max-width: 900px)";
+
+/** Picks the portrait cut of a clip on phones held upright. */
+export function usePortraitSrc(src: string, portraitSrc?: string) {
+  const [chosen, setChosen] = useState<string | null>(null);
+  useEffect(() => {
+    const mq = window.matchMedia(portraitQuery);
+    const pick = () => setChosen(portraitSrc && mq.matches ? portraitSrc : src);
+    pick();
+    mq.addEventListener("change", pick);
+    return () => mq.removeEventListener("change", pick);
+  }, [src, portraitSrc]);
+  return chosen;
 }
 
 type PhotoProps = {
@@ -49,34 +67,74 @@ export function Photo({ src, alt, className = "", sizes = "100vw", priority }: P
   );
 }
 
+/* ───────────── Autoplay helpers ─────────────
+ * In-app browsers (Messenger, Facebook, Instagram) and iPhones in Low Power
+ * Mode refuse to autoplay video. Any tap counts as permission, so we keep a
+ * registry of videos and start the visible ones on the next tap anywhere. */
+
+const videos = new Set<HTMLVideoElement>();
+let gestureListening = false;
+
+export function kickVideos() {
+  videos.forEach((v) => {
+    if (v.dataset.inview === "1" && v.dataset.autoplay === "1" && v.paused) v.play().catch(() => {});
+  });
+}
+
+function listenForGestures() {
+  if (gestureListening) return;
+  gestureListening = true;
+  (["pointerdown", "touchend", "click", "keydown"] as const).forEach((g) =>
+    window.addEventListener(g, kickVideos, { passive: true }),
+  );
+}
+
 type VideoProps = {
   src: string;
+  /** Optional vertical cut used on phones held upright. */
+  portraitSrc?: string;
   className?: string;
-  poster?: string;
-  /** Start playing as soon as it's near the viewport. */
+  /** Start downloading immediately instead of waiting until it's near the screen. */
+  eager?: boolean;
   autoPlay?: boolean;
   loop?: boolean;
+  /** Show a small "tap to play" hint when the browser blocks autoplay. */
+  hint?: boolean;
   onEnded?: () => void;
-  onTime?: (progress: number) => void;
 };
 
 /**
- * Muted, inline, looping video that only downloads when it comes near the
- * viewport and pauses itself when scrolled away — kind to phones and data plans.
+ * Muted, inline video that only downloads when it comes near the viewport,
+ * pauses itself when scrolled away, and recovers when autoplay is blocked.
  */
-export function LazyVideo({ src, className = "", poster, autoPlay = true, loop = true, onEnded, onTime }: VideoProps) {
+export function LazyVideo({ src, portraitSrc, className = "", eager, autoPlay = true, loop = true, hint = true, onEnded }: VideoProps) {
   const ref = useRef<HTMLVideoElement>(null);
-  const [near, setNear] = useState(false);
+  const chosen = usePortraitSrc(src, portraitSrc);
+  const [near, setNear] = useState(Boolean(eager));
+  const [blocked, setBlocked] = useState(false);
+
+  const tryPlay = () => {
+    const el = ref.current;
+    if (!el || !autoPlay || el.dataset.inview !== "1") return;
+    el.play()
+      .then(() => setBlocked(false))
+      .catch((err: DOMException) => {
+        if (err?.name === "NotAllowedError") setBlocked(true);
+      });
+  };
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    listenForGestures();
+    videos.add(el);
+    el.dataset.autoplay = autoPlay ? "1" : "0";
     const io = new IntersectionObserver(
       ([entry]) => {
+        el.dataset.inview = entry.isIntersecting ? "1" : "0";
         if (entry.isIntersecting) {
           setNear(true);
-          if (autoPlay && !reduce) el.play().catch(() => {});
+          tryPlay();
         } else {
           el.pause();
         }
@@ -84,29 +142,52 @@ export function LazyVideo({ src, className = "", poster, autoPlay = true, loop =
       { rootMargin: "300px 0px" },
     );
     io.observe(el);
-    return () => io.disconnect();
-  }, [autoPlay, src]);
+    return () => {
+      io.disconnect();
+      videos.delete(el);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoPlay]);
+
+  // Once the source is attached, start playing if we're on screen.
+  useEffect(() => {
+    if (near && chosen) tryPlay();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [near, chosen]);
+
+  const active = chosen && (near || eager);
 
   return (
-    <motion.video
-      ref={ref}
-      className={className}
-      src={near ? src : undefined}
-      poster={poster ? photoUrl(poster, 1400) : undefined}
-      muted
-      loop={loop}
-      playsInline
-      preload="none"
-      autoPlay={autoPlay}
-      onEnded={onEnded}
-      onTimeUpdate={(e) => {
-        const v = e.currentTarget;
-        if (onTime && v.duration) onTime(v.currentTime / v.duration);
-      }}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 1.2 }}
-      aria-hidden
-    />
+    <div className="relative h-full w-full">
+      <motion.video
+        ref={ref}
+        className={className}
+        src={active ? chosen : undefined}
+        poster={chosen ? posterFor(chosen) : undefined}
+        muted
+        loop={loop}
+        playsInline
+        preload={eager ? "auto" : "none"}
+        autoPlay={autoPlay}
+        onEnded={onEnded}
+        onPlaying={() => setBlocked(false)}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: chosen ? 1 : 0 }}
+        transition={{ duration: 0.8 }}
+        aria-hidden
+      />
+      <AnimatePresence>
+        {hint && blocked && (
+          <motion.span
+            className="pointer-events-none absolute right-3 bottom-3 flex items-center gap-2 rounded-full bg-black/35 px-3 py-1.5 text-[0.55rem] tracking-[0.2em] text-white uppercase backdrop-blur-md"
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+          >
+            ▶ Tap to play
+          </motion.span>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }

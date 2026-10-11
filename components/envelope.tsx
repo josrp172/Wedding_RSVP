@@ -4,6 +4,7 @@ import { AnimatePresence, motion, useAnimate } from "motion/react";
 import { useRef, useState } from "react";
 import { wedding } from "@/content/wedding";
 import { useIntro } from "./intro-context";
+import { kickVideos } from "./media";
 import { useMusic } from "./music";
 import { Petals } from "./petals";
 import { silk } from "./reveal";
@@ -45,6 +46,7 @@ export function Envelope() {
     if (busy.current) return;
     busy.current = true;
     music.start(); // must happen inside the tap for browsers to allow audio
+    kickVideos(); // same tap lets in-app browsers start the hero video
 
     const finish = () => {
       window.scrollTo({ top: 0 });

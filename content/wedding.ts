@@ -120,35 +120,36 @@ export const wedding = {
   },
 
   /**
-   * SAMPLE prenup footage — free stock clips from mixkit.co (Mixkit License).
-   * Replace with your own prenup videos before going live: drop .mp4 files into
-   * /public/videos and use paths like "/videos/hero.mp4", or paste Vercel Blob URLs.
-   * Tip: export at 720p / ~2–4 MB per clip so it loads fast on mobile data.
+   * SAMPLE prenup footage — free Mixkit stock clips (Mixkit License), re-encoded
+   * small and served from /public/videos so they start fast on phones.
+   * Each clip has a first-frame poster beside it (hero.mp4 → hero.jpg).
+   * `portrait` is a vertical cut used on phones held upright.
+   * To use your own: export ~10 s at 720p (and a 9:16 cut), H.264, no audio,
+   * "web optimized" / faststart, ideally under 2 MB, then drop them in /public/videos.
    */
   media: {
     /** Sample soundtrack ("Beautiful Dream", mixkit.co). Starts softly when the envelope is opened. */
     music: "https://assets.mixkit.co/music/493/493.mp3",
-    heroPoster: "https://images.unsplash.com/photo-1532712938310-34cb3982ef74",
     letterPhoto: "https://images.unsplash.com/photo-1561240055-102e7eaa2961",
-    hero: "https://assets.mixkit.co/videos/40596/40596-720.mp4",
+    hero: { src: "/videos/hero.mp4", portrait: "/videos/hero-portrait.mp4" },
     film: {
       title: "Our Prenup Film",
       subtitle: "Our prenup shoot is coming in early 2027 — until then, here’s a little preview.",
       credit: "Sample footage · Prenup film coming 2027",
       chapters: [
-        { title: "The Garden", src: "https://assets.mixkit.co/videos/40584/40584-720.mp4" },
-        { title: "The Promise", src: "https://assets.mixkit.co/videos/5223/5223-720.mp4" },
-        { title: "Just Us", src: "https://assets.mixkit.co/videos/40590/40590-720.mp4" },
-        { title: "Golden Hour", src: "https://assets.mixkit.co/videos/4829/4829-720.mp4" },
+        { title: "The Garden", src: "/videos/film-1.mp4", portrait: "/videos/film-1-portrait.mp4" },
+        { title: "The Promise", src: "/videos/film-2.mp4", portrait: "/videos/film-2-portrait.mp4" },
+        { title: "Just Us", src: "/videos/film-3.mp4", portrait: "/videos/film-3-portrait.mp4" },
+        { title: "Golden Hour", src: "/videos/film-4.mp4", portrait: "/videos/film-4-portrait.mp4" },
       ],
     },
     moments: [
-      { caption: "The yes from Hong Kong", src: "https://assets.mixkit.co/videos/5218/5218-720.mp4" },
-      { caption: "Still the girl from the commute", src: "https://assets.mixkit.co/videos/40586/40586-720.mp4" },
-      { caption: "Still the boy who waited", src: "https://assets.mixkit.co/videos/40587/40587-720.mp4" },
-      { caption: "Sundo at hatid, forever", src: "https://assets.mixkit.co/videos/40601/40601-720.mp4" },
-      { caption: "Forever starts here", src: "https://assets.mixkit.co/videos/40593/40593-720.mp4" },
-      { caption: "Almost married", src: "https://assets.mixkit.co/videos/40599/40599-720.mp4" },
+      { caption: "The yes from Hong Kong", src: "/videos/moment-1.mp4" },
+      { caption: "Still the girl from the commute", src: "/videos/moment-2.mp4" },
+      { caption: "Still the boy who waited", src: "/videos/moment-3.mp4" },
+      { caption: "Sundo at hatid, forever", src: "/videos/moment-4.mp4" },
+      { caption: "Forever starts here", src: "/videos/moment-5.mp4" },
+      { caption: "Almost married", src: "/videos/moment-6.mp4" },
     ],
   },
 

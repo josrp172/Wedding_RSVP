@@ -5,7 +5,7 @@ import { useRef } from "react";
 import { wedding } from "@/content/wedding";
 import { useIntro } from "./intro-context";
 import { Countdown } from "./countdown";
-import { LazyVideo } from "./media";
+import { LazyVideo, posterFor } from "./media";
 import { Petals } from "./petals";
 import { silk } from "./reveal";
 
@@ -52,9 +52,18 @@ export function Hero() {
 
   return (
     <section ref={ref} id="top" className="relative h-[100svh] min-h-[640px] bg-wine">
+      {/* fetch the first frame right away so the hero is never blank */}
+      <link rel="preload" as="image" href={posterFor(wedding.media.hero.portrait)} media="(orientation: portrait) and (max-width: 900px)" />
+      <link rel="preload" as="image" href={posterFor(wedding.media.hero.src)} media="not ((orientation: portrait) and (max-width: 900px))" />
       <motion.div className="absolute inset-0 overflow-hidden" style={{ borderBottomLeftRadius: radius, borderBottomRightRadius: radius }}>
         <motion.div className="absolute inset-0" style={{ scale: videoScale }}>
-          <LazyVideo src={wedding.media.hero} poster={wedding.media.heroPoster} className="h-full w-full object-cover" />
+          <LazyVideo
+            src={wedding.media.hero.src}
+            portraitSrc={wedding.media.hero.portrait}
+            eager
+            hint={false}
+            className="h-full w-full object-cover"
+          />
         </motion.div>
         {/* rosy colour grade + vignette */}
         <div aria-hidden className="absolute inset-0 bg-[#e98aa5]/25 mix-blend-soft-light" />

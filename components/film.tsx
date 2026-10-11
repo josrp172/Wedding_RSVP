@@ -10,7 +10,7 @@ import {
 } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { wedding } from "@/content/wedding";
-import { LazyVideo } from "./media";
+import { LazyVideo, posterFor, usePortraitSrc } from "./media";
 import { useMusic } from "./music";
 import { silk } from "./reveal";
 
@@ -72,6 +72,7 @@ function FilmPlayer({ onClose }: { onClose: () => void }) {
   };
 
   const current = film.chapters[chapter];
+  const currentSrc = usePortraitSrc(current.src, current.portrait) ?? current.src;
 
   return (
     <motion.div
@@ -120,9 +121,11 @@ function FilmPlayer({ onClose }: { onClose: () => void }) {
       <div className="relative flex flex-1 items-center justify-center">
         <AnimatePresence mode="popLayout">
           <motion.video
-            key={current.src}
+            key={currentSrc}
             ref={video}
-            src={current.src}
+            src={currentSrc}
+            poster={posterFor(currentSrc)}
+            onLoadedData={(e) => e.currentTarget.play().catch(() => setPaused(true))}
             className="absolute inset-0 h-full w-full object-cover sm:object-contain"
             autoPlay
             muted
@@ -222,6 +225,7 @@ export function Film() {
               >
                 <LazyVideo
                   src={film.chapters[preview].src}
+                  portraitSrc={film.chapters[preview].portrait}
                   loop={false}
                   onEnded={() => setPreview((p) => (p + 1) % film.chapters.length)}
                   className="h-full w-full object-cover"

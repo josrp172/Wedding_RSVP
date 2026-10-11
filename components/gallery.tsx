@@ -59,7 +59,7 @@ export function Moments() {
               whileHover={{ rotate: 0, scale: 1.02 }}
               transition={{ type: "spring", stiffness: 200, damping: 20 }}
             >
-              <LazyVideo src={m.src} className="h-full w-full scale-[1.35] object-cover" />
+              <LazyVideo src={m.src} className="h-full w-full object-cover" />
               <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-wine/85 via-transparent to-transparent" />
               <span className="absolute top-5 left-5 font-display text-sm tracking-[0.2em] text-white/80">
                 {String(i + 1).padStart(2, "0")}
