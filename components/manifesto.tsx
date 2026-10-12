@@ -4,7 +4,7 @@ import { motion, useScroll, useTransform, type MotionValue } from "motion/react"
 import { useRef } from "react";
 import { wedding } from "@/content/wedding";
 
-const highlight = new Set(["noticed", "ignored", "nine", "home."]);
+const highlight = new Set(["ignored", "zero", "itinerary."]);
 
 function Word({ word, progress, range }: { word: string; progress: MotionValue<number>; range: [number, number] }) {
   const opacity = useTransform(progress, range, [0.12, 1]);
@@ -33,7 +33,7 @@ export function Manifesto() {
         className="pointer-events-none absolute top-1/2 left-1/2 h-[70vh] w-[70vh] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,#f8cfd8_0%,transparent_65%)] opacity-70"
       />
       <div ref={ref} className="relative mx-auto max-w-5xl">
-        <p className="eyebrow mb-8 text-center">What we believe</p>
+        <p className="eyebrow mb-8 text-center">The short version</p>
         <p className="text-center font-display text-[2.1rem] leading-[1.25] font-light text-ink sm:text-[3.6rem] lg:text-[4.2rem]">
           <span className="sr-only">{wedding.manifesto}</span>
           <span aria-hidden>

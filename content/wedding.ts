@@ -67,7 +67,7 @@ export const wedding = {
         date: "Facebook",
         title: "Friend request: pending",
         icon: "chat",
-        photo: "/photos/hk5.jpg",
+        photo: "/photos/silly.jpg",
         body: "Alvin finally worked up the courage and sent Rheena a friend request. She ignored it. It took a real, face-to-face conversation before she finally pressed “Confirm” — and that one click opened the door to everything.",
       },
       {
@@ -175,7 +175,6 @@ export const wedding = {
     { src: "/photos/camera.jpg", caption: "Official photographer since day one" },
     { src: "/photos/beach-pose.jpg", caption: "Beach-day energy" },
     { src: "/photos/y7.jpg", caption: "Canteen dates" },
-    { src: "/photos/silly.jpg", caption: "Certified silly" },
     { src: "/photos/hk6.jpg", caption: "That look" },
     { src: "/photos/y3.jpg", caption: "The arcade prize" },
     { src: "/photos/y6.jpg", caption: "Since forever, this silly" },
@@ -183,7 +182,7 @@ export const wedding = {
 
   /** The big scroll-to-reveal line between the letter and the story. */
   manifesto:
-    "He noticed her on the way to school. She ignored his friend request. Nine years later, he’s still the one who brings her home.",
+    "Two engineering students from Taguig. One ignored friend request. Nine years, zero breakups — and one very detailed wedding itinerary.",
 
   /** Shown on the wishes wall until real guest notes arrive. */
   sampleWishes: [
