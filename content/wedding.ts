@@ -180,9 +180,9 @@ export const wedding = {
     { src: "/photos/y6.jpg", caption: "Since forever, this silly" },
   ],
 
-  /** The big scroll-to-reveal line between the letter and the story. */
-  manifesto:
-    "Two engineering students from Taguig. One ignored friend request. Nine years, zero breakups — and one very detailed wedding itinerary.",
+  /** The big scroll-to-reveal line between the letter and the story: her real answer from the proposal. */
+  manifesto: "“Oo naman, yes! Tagal kong inantay ito.”",
+  manifestoBy: "Rheena · Hong Kong, September 2026",
 
   /** Shown on the wishes wall until real guest notes arrive. */
   sampleWishes: [
