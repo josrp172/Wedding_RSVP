@@ -15,20 +15,31 @@ import { useMusic } from "./music";
 import { silk } from "./reveal";
 
 const film = wedding.media.film;
+const chapters = film.chapters;
 const roman = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII"];
 
-/** Full-screen chaptered player with story-style progress bars. */
+const chapterAt = (t: number) => {
+  let idx = 0;
+  chapters.forEach((c, i) => {
+    if (t >= c.start) idx = i;
+  });
+  return idx;
+};
+
+/** Full-screen player: one film, story-style chapter bars, sound on by default. */
 function FilmPlayer({ onClose }: { onClose: () => void }) {
-  const [chapter, setChapter] = useState(0);
-  const [progress, setProgress] = useState(0);
-  const [paused, setPaused] = useState(false);
   const video = useRef<HTMLVideoElement>(null);
+  const src = usePortraitSrc(film.src, film.portrait);
+  const [time, setTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [muted, setMuted] = useState(false);
   const { duck } = useMusic();
   const duckRef = useRef(duck);
   duckRef.current = duck;
+  const chapter = chapterAt(time);
 
   useEffect(() => {
-    duckRef.current(true);
     const root = document.documentElement;
     root.style.overflow = "hidden";
     return () => {
@@ -36,6 +47,27 @@ function FilmPlayer({ onClose }: { onClose: () => void }) {
       root.style.overflow = "";
     };
   }, []);
+
+  // The film has its own soundtrack, so quiet the site's music while it plays with sound.
+  useEffect(() => {
+    duckRef.current(!muted);
+  }, [muted]);
+
+  const seek = (t: number) => {
+    const v = video.current;
+    if (!v) return;
+    v.currentTime = Math.max(0, t);
+    setTime(v.currentTime);
+    if (v.paused) v.play().catch(() => {});
+  };
+  const next = () => (chapter + 1 < chapters.length ? seek(chapters[chapter + 1].start) : onClose());
+  const prev = () => seek(time - chapters[chapter].start > 2 || chapter === 0 ? chapters[chapter].start : chapters[chapter - 1].start);
+  const togglePause = () => {
+    const v = video.current;
+    if (!v) return;
+    if (v.paused) v.play().catch(() => {});
+    else v.pause();
+  };
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -51,28 +83,15 @@ function FilmPlayer({ onClose }: { onClose: () => void }) {
     return () => window.removeEventListener("keydown", onKey);
   });
 
-  const next = () => {
-    setProgress(0);
-    setChapter((c) => (c + 1 < film.chapters.length ? c + 1 : 0));
+  // Try with sound first (opening the player was a tap); fall back to muted if the browser refuses.
+  const start = (v: HTMLVideoElement) => {
+    v.muted = false;
+    v.play().catch(() => {
+      v.muted = true;
+      setMuted(true);
+      v.play().catch(() => setPaused(true));
+    });
   };
-  const prev = () => {
-    setProgress(0);
-    setChapter((c) => (c > 0 ? c - 1 : 0));
-  };
-  const togglePause = () => {
-    const v = video.current;
-    if (!v) return;
-    if (v.paused) {
-      v.play().catch(() => {});
-      setPaused(false);
-    } else {
-      v.pause();
-      setPaused(true);
-    }
-  };
-
-  const current = film.chapters[chapter];
-  const currentSrc = usePortraitSrc(current.src, current.portrait) ?? current.src;
 
   return (
     <motion.div
@@ -87,63 +106,64 @@ function FilmPlayer({ onClose }: { onClose: () => void }) {
     >
       {/* chapter progress */}
       <div className="absolute inset-x-0 top-0 z-20 flex gap-1.5 px-4 pt-[max(1rem,env(safe-area-inset-top))] sm:px-8">
-        {film.chapters.map((c, i) => (
-          <button
-            key={c.title}
-            type="button"
-            onClick={() => {
-              setProgress(0);
-              setChapter(i);
-            }}
-            className="h-6 flex-1 py-2.5"
-            aria-label={`Chapter ${i + 1}: ${c.title}`}
-          >
-            <span className="block h-[3px] overflow-hidden rounded-full bg-white/25">
-              <span
-                className="block h-full rounded-full bg-white"
-                style={{ width: `${i < chapter ? 100 : i === chapter ? progress * 100 : 0}%` }}
-              />
-            </span>
-          </button>
-        ))}
+        {chapters.map((c, i) => {
+          const end = chapters[i + 1]?.start ?? (duration || c.start + 10);
+          const fill = Math.min(1, Math.max(0, (time - c.start) / (end - c.start)));
+          return (
+            <button key={c.title} type="button" onClick={() => seek(c.start)} className="h-6 flex-1 py-2.5" aria-label={`Chapter ${i + 1}: ${c.title}`}>
+              <span className="block h-[3px] overflow-hidden rounded-full bg-white/25">
+                <span className="block h-full rounded-full bg-white" style={{ width: `${fill * 100}%` }} />
+              </span>
+            </button>
+          );
+        })}
       </div>
 
-      <button
-        type="button"
-        onClick={onClose}
-        className="absolute top-[max(2.4rem,calc(env(safe-area-inset-top)+1.6rem))] right-4 z-20 grid h-11 w-11 place-items-center rounded-full bg-white/10 backdrop-blur-md transition-colors hover:bg-white/25 sm:right-8"
-        aria-label="Close film"
-      >
-        <span className="absolute h-px w-5 rotate-45 bg-white" />
-        <span className="absolute h-px w-5 -rotate-45 bg-white" />
-      </button>
+      <div className="absolute top-[max(2.4rem,calc(env(safe-area-inset-top)+1.6rem))] right-4 z-20 flex gap-2 sm:right-8">
+        <button
+          type="button"
+          onClick={() => {
+            const v = video.current;
+            if (!v) return;
+            v.muted = !v.muted;
+            setMuted(v.muted);
+          }}
+          className="flex h-11 items-center gap-2 rounded-full bg-white/10 px-4 text-[0.6rem] tracking-[0.2em] uppercase backdrop-blur-md transition-colors hover:bg-white/25"
+          aria-pressed={!muted}
+        >
+          {muted ? "🔇 Tap for sound" : "🔊 Sound on"}
+        </button>
+        <button
+          type="button"
+          onClick={onClose}
+          className="relative grid h-11 w-11 place-items-center rounded-full bg-white/10 backdrop-blur-md transition-colors hover:bg-white/25"
+          aria-label="Close film"
+        >
+          <span className="absolute h-px w-5 rotate-45 bg-white" />
+          <span className="absolute h-px w-5 -rotate-45 bg-white" />
+        </button>
+      </div>
 
       <div className="relative flex flex-1 items-center justify-center">
-        <AnimatePresence mode="popLayout">
-          <motion.video
-            key={currentSrc}
+        {src && (
+          <video
             ref={video}
-            src={currentSrc}
-            poster={posterFor(currentSrc)}
-            onLoadedData={(e) => e.currentTarget.play().catch(() => setPaused(true))}
-            className="absolute inset-0 h-full w-full object-cover sm:object-contain"
-            autoPlay
-            muted
+            src={src}
+            poster={posterFor(src)}
+            className="absolute inset-0 h-full w-full object-contain"
             playsInline
-            onEnded={next}
-            onTimeUpdate={(e) => {
-              const v = e.currentTarget;
-              if (v.duration) setProgress(v.currentTime / v.duration);
+            preload="auto"
+            onLoadedMetadata={(e) => {
+              setDuration(e.currentTarget.duration);
+              start(e.currentTarget);
             }}
-            initial={{ opacity: 0, scale: 1.04 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 1, ease: silk }}
+            onTimeUpdate={(e) => setTime(e.currentTarget.currentTime)}
+            onPlay={() => setPaused(false)}
+            onPause={() => setPaused(true)}
+            onEnded={onClose}
           />
-        </AnimatePresence>
-        <div aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-t from-wine via-transparent to-wine/60" />
+        )}
 
-        {/* tap zones */}
         <button type="button" className="absolute inset-y-0 left-0 w-1/3" onClick={prev} aria-label="Previous chapter" />
         <button type="button" className="absolute inset-y-0 left-1/3 w-1/3" onClick={togglePause} aria-label={paused ? "Play" : "Pause"} />
         <button type="button" className="absolute inset-y-0 right-0 w-1/3" onClick={next} aria-label="Next chapter" />
@@ -162,30 +182,17 @@ function FilmPlayer({ onClose }: { onClose: () => void }) {
         </AnimatePresence>
       </div>
 
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 px-6 pb-[max(2rem,env(safe-area-inset-bottom))] text-center sm:pb-12">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={chapter}
-            initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            exit={{ opacity: 0, y: -10, filter: "blur(8px)" }}
-            transition={{ duration: 0.9, ease: silk }}
-          >
-            <p className="text-[0.62rem] tracking-[0.4em] text-blush uppercase">Chapter {roman[chapter]}</p>
-            <p className="mt-2 font-script text-5xl sm:text-7xl">{current.title}</p>
-          </motion.div>
-        </AnimatePresence>
-        <p className="mt-4 text-[0.58rem] tracking-[0.3em] text-white/50 uppercase">{film.credit}</p>
-      </div>
+      <p className="sr-only" aria-live="polite">
+        Chapter {chapter + 1}: {chapters[chapter].title}
+      </p>
     </motion.div>
   );
 }
 
-/** The video frame grows from a card to full-screen as you scroll, then invites guests to watch. */
+/** The teaser grows from a card to full-screen as you scroll, then invites guests to watch. */
 export function Film() {
   const ref = useRef<HTMLElement>(null);
   const [open, setOpen] = useState(false);
-  const [preview, setPreview] = useState(0);
   const [phase, setPhase] = useState(0);
   const [isPhone, setIsPhone] = useState(false);
 
@@ -206,7 +213,7 @@ export function Film() {
   const leftX = useTransform(scrollYProgress, [0, 0.5], ["0%", "-60%"]);
   const rightX = useTransform(scrollYProgress, [0, 0.5], ["0%", "60%"]);
   const titleOpacity = useTransform(scrollYProgress, [0, 0.35, 0.5], [1, 1, 0]);
-  const videoScale = useTransform(scrollYProgress, [0, 0.6], [1.25, 1]);
+  const videoScale = useTransform(scrollYProgress, [0, 0.6], [1.15, 1]);
   useMotionValueEvent(scrollYProgress, "change", (v) => setPhase(v > 0.5 ? 1 : 0));
 
   return (
@@ -214,45 +221,25 @@ export function Film() {
       <div className="sticky top-0 flex h-[100svh] items-center justify-center overflow-hidden">
         <motion.div className="absolute inset-0 bg-wine" style={{ clipPath }}>
           <motion.div className="absolute inset-0" style={{ scale: videoScale }}>
-            <AnimatePresence mode="popLayout">
-              <motion.div
-                key={preview}
-                className="absolute inset-0"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 1.2 }}
-              >
-                <LazyVideo
-                  src={film.chapters[preview].src}
-                  portraitSrc={film.chapters[preview].portrait}
-                  loop={false}
-                  onEnded={() => setPreview((p) => (p + 1) % film.chapters.length)}
-                  className="h-full w-full object-cover"
-                />
-              </motion.div>
-            </AnimatePresence>
+            <LazyVideo src={film.teaser.src} portraitSrc={film.teaser.portrait} className="h-full w-full object-cover" />
           </motion.div>
-          <div aria-hidden className="absolute inset-0 bg-[#e98aa5]/20 mix-blend-soft-light" />
-          <div aria-hidden className="absolute inset-0 bg-gradient-to-b from-wine/50 via-wine/10 to-wine/70" />
-          {/* letterbox film grain lines */}
-          <div aria-hidden className="absolute inset-0 opacity-[0.07] [background:repeating-linear-gradient(0deg,#fff_0_1px,transparent_1px_3px)]" />
+          <div aria-hidden className="absolute inset-0 bg-gradient-to-b from-wine/50 via-wine/5 to-wine/80" />
         </motion.div>
 
         <motion.h2
           className="pointer-events-none relative z-10 flex flex-col items-center font-display text-[clamp(3.5rem,15vw,11rem)] leading-[0.85] font-light text-white mix-blend-difference sm:flex-row sm:gap-8"
           style={{ opacity: titleOpacity }}
         >
-          <motion.span style={{ x: leftX }}>Our</motion.span>
+          <motion.span style={{ x: leftX }}>The</motion.span>
           <motion.span style={{ x: rightX }} className="italic">
-            Prenup
+            Proposal
           </motion.span>
         </motion.h2>
 
         <AnimatePresence>
           {phase === 1 && (
             <motion.div
-              className="absolute inset-x-0 bottom-0 z-10 flex flex-col items-center px-6 pb-[max(3rem,env(safe-area-inset-bottom))] text-center text-white sm:pb-20"
+              className="absolute inset-x-0 bottom-0 z-10 flex flex-col items-center px-6 pb-[max(3rem,env(safe-area-inset-bottom))] text-center text-white sm:pb-16"
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
@@ -267,7 +254,7 @@ export function Film() {
                 className="group relative mt-8 grid h-24 w-24 place-items-center rounded-full bg-white text-berry"
                 whileHover={{ scale: 1.08 }}
                 whileTap={{ scale: 0.95 }}
-                aria-label="Play the prenup film"
+                aria-label="Play the film"
               >
                 <motion.span
                   className="absolute inset-0 rounded-full border border-white"
@@ -283,9 +270,10 @@ export function Film() {
                   <path d="M7 4.5v15l13-7.5z" />
                 </svg>
               </motion.button>
-              <div className="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-2">
-                {film.chapters.map((c, i) => (
-                  <span key={c.title} className={`text-[0.6rem] tracking-[0.28em] uppercase transition-opacity ${i === preview ? "opacity-100" : "opacity-50"}`}>
+              <p className="mt-4 text-[0.58rem] tracking-[0.3em] text-white/60 uppercase">Watch with sound · 1 min 24 s</p>
+              <div className="mt-6 hidden flex-wrap justify-center gap-x-6 gap-y-2 sm:flex">
+                {chapters.map((c, i) => (
+                  <span key={c.title} className="text-[0.6rem] tracking-[0.28em] uppercase opacity-60">
                     {roman[i]}. {c.title}
                   </span>
                 ))}

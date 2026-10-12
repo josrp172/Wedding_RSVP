@@ -7,3 +7,11 @@ out
 .vercel
 *.tsbuildinfo
 next-env.d.ts
+
+# raw footage & photos from the couple (originals stay local)
+/reference
+
+# Remotion project: keep the code, not the heavy media or renders
+/video/node_modules
+/video/out
+/video/public/proposal.mp4

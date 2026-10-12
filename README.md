@@ -13,6 +13,18 @@ Nearly everything lives in **`content/wedding.ts`**: names, dates, story, venues
 - **Photos & videos:** the samples are free stock (photos from [Unsplash](https://unsplash.com/license), videos and music from [Mixkit](https://mixkit.co/license/)). Swap in your own prenup files before going live: put them in `public/photos` / `public/videos` and use paths like `"/photos/01.jpg"`. Keep videos at about 720p and 2–4 MB each.
 - **Personal invite links:** `https://your-site.vercel.app/?to=Tita%20Rosa` greets that guest by name on the envelope and letter, and pre-fills their RSVP.
 
+## Videos (Remotion)
+
+The site's videos are edited in code with [Remotion](https://www.remotion.dev) in the `video/` folder: the opening loop, the film-section teaser, and the full film (title card → chapters with subtitles → end card), each in a phone and desktop cut.
+
+```bash
+cd video
+npm install
+npm run studio            # preview and tweak in the browser
+```
+
+Source footage goes in `video/public/` (it's git-ignored because of its size). Timings, subtitles and chapters live in `video/src/data.ts`. After rendering, the compressed files go in `public/videos/`, and the chapter start times in `content/wedding.ts` must match the film.
+
 ## Run locally
 
 ```bash

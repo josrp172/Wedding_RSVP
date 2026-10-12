@@ -47,7 +47,7 @@ export function Moments() {
               Behind the <span className="font-script text-rose-soft">scenes</span>
             </h2>
             <p className="mt-5 max-w-sm font-display text-lg text-white/75 italic">
-              Outtakes, giggles and in-between seconds from our prenup shoot. Keep scrolling →
+              Little moments from the day he asked, in Hong Kong. Keep scrolling →
             </p>
           </div>
 
@@ -272,7 +272,7 @@ export function Gallery() {
       <SectionHeading
         eyebrow="The Prenup Gallery"
         title="Frames of forever"
-        intro="A few favourites from our prenup — tap any photo to see it up close."
+        intro="Nine years of favourite frames — tap any photo to see it up close."
       />
 
       <div ref={ref} className="mx-auto mt-16 grid max-w-6xl gap-3 sm:gap-5" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>

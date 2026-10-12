@@ -59,7 +59,7 @@ export const wedding = {
         date: "College days",
         title: "The girl on the way to school",
         icon: "bus",
-        photo: "https://images.unsplash.com/photo-1742578754019-d9c352bae2d0",
+        photo: "/photos/y1.jpg",
         body: "Alvin and Rheena were neighbours in Taguig and both studied engineering at RTU — different courses, same building. Alvin kept seeing Rheena on her way to school, and somewhere between those commutes he quietly fell for her, long before he ever said hello.",
       },
       {
@@ -67,7 +67,7 @@ export const wedding = {
         date: "Facebook",
         title: "Friend request: pending",
         icon: "chat",
-        photo: "https://images.unsplash.com/photo-1625463006115-09f08489f591",
+        photo: "/photos/hk5.jpg",
         body: "Alvin finally worked up the courage and sent Rheena a friend request. She ignored it. It took a real, face-to-face conversation before she finally pressed “Confirm” — and that one click opened the door to everything.",
       },
       {
@@ -75,7 +75,7 @@ export const wedding = {
         date: "The beginning of us",
         title: "From chats to “us”",
         icon: "heart",
-        photo: "https://images.unsplash.com/photo-1687283457351-15e6f3c0b146",
+        photo: "/photos/y2.jpg",
         body: "One chat turned into another, and another, until they became a couple. Both families welcomed the relationship from the start — and with personalities this alike, they just fit.",
       },
       {
@@ -83,7 +83,7 @@ export const wedding = {
         date: "Sundo at hatid",
         title: "The one who always shows up",
         icon: "car",
-        photo: "https://images.unsplash.com/photo-1566899478234-cd963727a2ff",
+        photo: "/photos/y5.jpg",
         body: "Nine years, and not a single breakup. Alvin has been Rheena’s constant: the daily sundo at hatid, the name on her emergency contact, the steady presence just a few streets away. Rheena has the strong personality; Alvin has the patience — and it works.",
       },
       {
@@ -91,7 +91,7 @@ export const wedding = {
         date: "Our adventures",
         title: "Roads we’ve taken",
         icon: "wave",
-        photo: "https://images.unsplash.com/photo-1722635465474-299d1d797a0a",
+        photo: "/photos/y4.jpg",
         body: "Over the years they’ve explored new places together — including the waves of Aurora — sometimes with Rheena’s sister Cass along for the ride. Every trip, of course, came with one of Rheena’s famously detailed itineraries.",
       },
       {
@@ -99,7 +99,7 @@ export const wedding = {
         date: "September · Hong Kong",
         title: "The question in Hong Kong",
         icon: "ring",
-        photo: "https://images.unsplash.com/photo-1678110721308-a08ed05a7938",
+        photo: "/photos/s1.jpg",
         body: "Far from the streets where it all began, Alvin asked Rheena to spend forever with him — in Hong Kong, in September 2026. After nine years of showing up for her, he asked the one question that mattered most. She said yes.",
       },
       {
@@ -107,7 +107,7 @@ export const wedding = {
         date: "October",
         title: "Forever, before God",
         icon: "church",
-        photo: "https://images.unsplash.com/photo-1643697706170-d2a1892155d1",
+        photo: "/photos/hk3.jpg",
         body: "This October, surrounded by both of our families and everyone who has cheered us on, we’ll make our promise in a Catholic church wedding. Rheena has the itinerary ready. All that’s left is you.",
       },
     ],
@@ -120,56 +120,56 @@ export const wedding = {
   },
 
   /**
-   * SAMPLE prenup footage — free Mixkit stock clips (Mixkit License), re-encoded
-   * small and served from /public/videos so they start fast on phones.
-   * Each clip has a first-frame poster beside it (hero.mp4 → hero.jpg).
-   * `portrait` is a vertical cut used on phones held upright.
-   * To use your own: export ~10 s at 720p (and a 9:16 cut), H.264, no audio,
-   * "web optimized" / faststart, ideally under 2 MB, then drop them in /public/videos.
+   * Videos are edited from the proposal footage with Remotion (see /video) and
+   * served from /public/videos. Each has a first-frame poster beside it
+   * (hero.mp4 → hero.jpg). `portrait` is the cut used on phones held upright.
    */
   media: {
     /** Sample soundtrack ("Beautiful Dream", mixkit.co). Starts softly when the envelope is opened. */
     music: "https://assets.mixkit.co/music/493/493.mp3",
-    letterPhoto: "https://images.unsplash.com/photo-1561240055-102e7eaa2961",
+    letterPhoto: "/photos/hk6.jpg",
     hero: { src: "/videos/hero.mp4", portrait: "/videos/hero-portrait.mp4" },
+    /** Placeholder until the prenup shoot: the proposal itself, edited as a short film. */
     film: {
-      title: "Our Prenup Film",
-      subtitle: "Our prenup shoot is coming in early 2027 — until then, here’s a little preview.",
-      credit: "Sample footage · Prenup film coming 2027",
+      title: "The Proposal",
+      subtitle: "Hong Kong, September 2026 — the day Alvin asked. Our prenup film is coming in 2027; until then, here’s where it all began.",
+      credit: "Filmed in Hong Kong · September 2026",
+      src: "/videos/film.mp4",
+      portrait: "/videos/film-portrait.mp4",
+      teaser: { src: "/videos/teaser.mp4", portrait: "/videos/teaser-portrait.mp4" },
+      /** Start times in seconds — must match the chapters baked into the film (video/src/data.ts). */
       chapters: [
-        { title: "The Garden", src: "/videos/film-1.mp4", portrait: "/videos/film-1-portrait.mp4" },
-        { title: "The Promise", src: "/videos/film-2.mp4", portrait: "/videos/film-2-portrait.mp4" },
-        { title: "Just Us", src: "/videos/film-3.mp4", portrait: "/videos/film-3-portrait.mp4" },
-        { title: "Golden Hour", src: "/videos/film-4.mp4", portrait: "/videos/film-4-portrait.mp4" },
+        { title: "Just an ordinary photoshoot", start: 0 },
+        { title: "Something’s up", start: 21 },
+        { title: "The question", start: 42 },
+        { title: "Oo naman, yes!", start: 55 },
+        { title: "May ring ka na!", start: 70 },
       ],
     },
     moments: [
-      { caption: "The yes from Hong Kong", src: "/videos/moment-1.mp4" },
-      { caption: "Still the girl from the commute", src: "/videos/moment-2.mp4" },
-      { caption: "Still the boy who waited", src: "/videos/moment-3.mp4" },
-      { caption: "Sundo at hatid, forever", src: "/videos/moment-4.mp4" },
-      { caption: "Forever starts here", src: "/videos/moment-5.mp4" },
-      { caption: "Almost married", src: "/videos/moment-6.mp4" },
+      { caption: "Just an ordinary photoshoot…", src: "/videos/moment-1.mp4" },
+      { caption: "…or so she thought", src: "/videos/moment-2.mp4" },
+      { caption: "“Sabi ko na eh!”", src: "/videos/moment-3.mp4" },
+      { caption: "“Will you marry me?”", src: "/videos/moment-4.mp4" },
+      { caption: "“Right? Left pala!”", src: "/videos/moment-5.mp4" },
+      { caption: "“May ring ka na!!!”", src: "/videos/moment-6.mp4" },
     ],
   },
 
-  /**
-   * SAMPLE prenup photos — free Unsplash photos (Unsplash License).
-   * Replace with your own: put files in /public/photos and use "/photos/01.jpg".
-   */
+  /** Photos live in /public/photos as name-700.jpg and name-1400.jpg; refer to them as "/photos/name.jpg". */
   gallery: [
-    { src: "https://images.unsplash.com/photo-1561240055-102e7eaa2961", caption: "Golden hour" },
-    { src: "https://images.unsplash.com/photo-1540076156429-35ffe82b7870", caption: "Forehead kisses" },
-    { src: "https://images.unsplash.com/photo-1627964464837-6328f5931576", caption: "Laughing at nothing" },
-    { src: "https://images.unsplash.com/photo-1591969851586-adbbd4accf81", caption: "Into the light" },
-    { src: "https://images.unsplash.com/photo-1559435578-231f6137aac5", caption: "He still carries me" },
-    { src: "https://images.unsplash.com/photo-1567051181435-c9c9647c9cd4", caption: "Home is a hug" },
-    { src: "https://images.unsplash.com/photo-1549062572-b4280938a25f", caption: "Almost" },
-    { src: "https://images.unsplash.com/photo-1522033467113-b8db23657b96", caption: "Always beside you" },
-    { src: "https://images.unsplash.com/photo-1555689070-b25ef81cc3ea", caption: "Wherever you go" },
-    { src: "https://images.unsplash.com/photo-1529519195486-16945f0fb37f", caption: "Hold on" },
-    { src: "https://images.unsplash.com/photo-1519741497674-611481863552", caption: "A preview of forever" },
-    { src: "https://images.unsplash.com/photo-1659090278376-9abe0a8f791a", caption: "Dress rehearsal" },
+    { src: "/photos/hk1.jpg", caption: "Hong Kong, September 2026" },
+    { src: "/photos/y8.jpg", caption: "Photo booth, four times over" },
+    { src: "/photos/s2.jpg", caption: "“Oo naman, yes!”" },
+    { src: "/photos/hk6.jpg", caption: "That look" },
+    { src: "/photos/y7.jpg", caption: "Canteen dates" },
+    { src: "/photos/s3.jpg", caption: "“May ring ka na!!!”" },
+    { src: "/photos/y9.jpg", caption: "Congratulations, Engineer!" },
+    { src: "/photos/hk4.jpg", caption: "Engaged" },
+    { src: "/photos/y6.jpg", caption: "Certified silly" },
+    { src: "/photos/hk8.jpg", caption: "Her favourite bridge" },
+    { src: "/photos/y3.jpg", caption: "The arcade prize" },
+    { src: "/photos/hk7.jpg", caption: "Main character energy" },
   ],
 
   /** The big scroll-to-reveal line between the letter and the story. */
@@ -197,7 +197,7 @@ export const wedding = {
       address: "Batulao, Nasugbu, Batangas",
       note: "Our Catholic church ceremony. Please be seated by 2:40 PM — Rheena has planned this to the minute.",
       mapsQuery: "Caleruega Church Nasugbu Batangas",
-      photo: "https://images.unsplash.com/photo-1590566859269-7f933083a746",
+      photo: "/photos/hk4.jpg",
     },
     {
       kind: "The Reception",
@@ -206,7 +206,7 @@ export const wedding = {
       address: "Tagaytay City, Cavite",
       note: "Dinner, dancing and string lights under the open sky. About 25 minutes from the church.",
       mapsQuery: "Hillcreek Gardens Tagaytay",
-      photo: "https://images.unsplash.com/photo-1532712938310-34cb3982ef74",
+      photo: "/photos/hk8.jpg",
     },
   ],
 

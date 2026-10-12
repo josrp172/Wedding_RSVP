@@ -4,10 +4,14 @@ import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 
 const isUnsplash = (src: string) => src.startsWith("https://images.unsplash.com/");
+/** Local photos ship in two sizes: /photos/hk1.jpg → hk1-700.jpg and hk1-1400.jpg */
+const isLocalPhoto = (src: string) => src.startsWith("/photos/") && src.endsWith(".jpg");
 
-/** Builds a sized URL for Unsplash; local/other images are used as-is. */
+/** Picks the right size of a photo for the width it's shown at. */
 export function photoUrl(src: string, width: number) {
-  return isUnsplash(src) ? `${src}?auto=format&fit=crop&w=${width}&q=78` : src;
+  if (isUnsplash(src)) return `${src}?auto=format&fit=crop&w=${width}&q=78`;
+  if (isLocalPhoto(src)) return src.replace(/\.jpg$/, width <= 800 ? "-700.jpg" : "-1400.jpg");
+  return src;
 }
 
 /** Local clips ship with a first-frame poster next to them: /videos/hero.mp4 → /videos/hero.jpg */
@@ -16,15 +20,15 @@ export const posterFor = (src: string) => (src.startsWith("/") ? src.replace(/\.
 const portraitQuery = "(orientation: portrait) and (max-width: 900px)";
 
 /** Picks the portrait cut of a clip on phones held upright. */
-export function usePortraitSrc(src: string, portraitSrc?: string) {
+export function usePortraitSrc(src: string, portraitSrc?: string, query = portraitQuery) {
   const [chosen, setChosen] = useState<string | null>(null);
   useEffect(() => {
-    const mq = window.matchMedia(portraitQuery);
+    const mq = window.matchMedia(query);
     const pick = () => setChosen(portraitSrc && mq.matches ? portraitSrc : src);
     pick();
     mq.addEventListener("change", pick);
     return () => mq.removeEventListener("change", pick);
-  }, [src, portraitSrc]);
+  }, [src, portraitSrc, query]);
   return chosen;
 }
 
@@ -42,7 +46,9 @@ export function Photo({ src, alt, className = "", sizes = "100vw", priority }: P
   const ref = useRef<HTMLImageElement>(null);
   const srcSet = isUnsplash(src)
     ? [400, 700, 1000, 1400, 1900].map((w) => `${photoUrl(src, w)} ${w}w`).join(", ")
-    : undefined;
+    : isLocalPhoto(src)
+      ? `${photoUrl(src, 700)} 700w, ${photoUrl(src, 1400)} 1400w`
+      : undefined;
 
   useEffect(() => {
     if (ref.current?.complete) setLoaded(true);
@@ -93,6 +99,8 @@ type VideoProps = {
   src: string;
   /** Optional vertical cut used on phones held upright. */
   portraitSrc?: string;
+  /** Media query for when to use `portraitSrc` (defaults to phones held upright). */
+  portraitQuery?: string;
   className?: string;
   /** Start downloading immediately instead of waiting until it's near the screen. */
   eager?: boolean;
@@ -107,9 +115,9 @@ type VideoProps = {
  * Muted, inline video that only downloads when it comes near the viewport,
  * pauses itself when scrolled away, and recovers when autoplay is blocked.
  */
-export function LazyVideo({ src, portraitSrc, className = "", eager, autoPlay = true, loop = true, hint = true, onEnded }: VideoProps) {
+export function LazyVideo({ src, portraitSrc, portraitQuery: query, className = "", eager, autoPlay = true, loop = true, hint = true, onEnded }: VideoProps) {
   const ref = useRef<HTMLVideoElement>(null);
-  const chosen = usePortraitSrc(src, portraitSrc);
+  const chosen = usePortraitSrc(src, portraitSrc, query);
   const [near, setNear] = useState(Boolean(eager));
   const [blocked, setBlocked] = useState(false);
 
