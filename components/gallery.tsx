@@ -226,8 +226,30 @@ function Lightbox({ index, onClose, onIndex }: { index: number; onClose: () => v
   );
 }
 
-function Tile({ shot, index, onOpen }: { shot: Shot; index: number; onOpen: (i: number) => void }) {
-  const tall = index % 3 !== 1;
+/** Mix of portrait and square tiles. */
+const isTall = (i: number) => i % 3 !== 1;
+
+/** Fills columns shortest-first, then evens out the bottoms by turning squares into portraits. */
+function balance<T>(items: T[], cols: number) {
+  const columns: { item: T; i: number; tall: boolean }[][] = Array.from({ length: cols }, () => []);
+  const heights = new Array(cols).fill(0);
+  items.forEach((item, i) => {
+    const c = heights.indexOf(Math.min(...heights));
+    columns[c].push({ item, i, tall: isTall(i) });
+    heights[c] += isTall(i) ? 4 / 3 : 1;
+  });
+  for (let guard = 0; guard < 20; guard++) {
+    const lo = heights.indexOf(Math.min(...heights));
+    if (Math.max(...heights) - heights[lo] < 0.3) break;
+    const square = [...columns[lo]].reverse().find((t) => !t.tall);
+    if (!square) break;
+    square.tall = true;
+    heights[lo] += 1 / 3;
+  }
+  return columns;
+}
+
+function Tile({ shot, index, tall, onOpen }: { shot: Shot; index: number; tall: boolean; onOpen: (i: number) => void }) {
   return (
     <motion.button
       type="button"
@@ -258,9 +280,9 @@ export function Gallery() {
   const [open, setOpen] = useState<number | null>(null);
   const [cols, setCols] = useState(3);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const y1 = useTransform(scrollYProgress, [0, 1], [60, -60]);
-  const y2 = useTransform(scrollYProgress, [0, 1], [-40, 140]);
-  const y3 = useTransform(scrollYProgress, [0, 1], [100, -100]);
+  const y1 = useTransform(scrollYProgress, [0, 1], [30, -30]);
+  const y2 = useTransform(scrollYProgress, [0, 1], [-30, 40]);
+  const y3 = useTransform(scrollYProgress, [0, 1], [45, -45]);
   const ys = [y1, y2, y3];
 
   useEffect(() => {
@@ -271,9 +293,7 @@ export function Gallery() {
     return () => mq.removeEventListener("change", set);
   }, []);
 
-  const columns = Array.from({ length: cols }, (_, c) =>
-    wedding.gallery.map((s, i) => ({ s, i })).filter(({ i }) => i % cols === c),
-  );
+  const columns = balance([...wedding.gallery], cols);
 
   return (
     <section id="gallery" className="relative overflow-hidden px-4 py-24 sm:px-6 sm:py-36">
@@ -286,8 +306,8 @@ export function Gallery() {
       <div ref={ref} className="mx-auto mt-16 grid max-w-6xl gap-3 sm:gap-5" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
         {columns.map((col, c) => (
           <motion.div key={c} className="flex flex-col gap-3 sm:gap-5" style={{ y: ys[c] }}>
-            {col.map(({ s, i }) => (
-              <Tile key={s.src} shot={s} index={i} onOpen={setOpen} />
+            {col.map(({ item, i, tall }) => (
+              <Tile key={item.src} shot={item} index={i} tall={tall} onOpen={setOpen} />
             ))}
           </motion.div>
         ))}

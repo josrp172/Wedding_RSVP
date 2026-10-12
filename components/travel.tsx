@@ -95,9 +95,6 @@ function GiftEnvelope() {
   const g = wedding.gifts;
   return (
     <div className="mx-auto max-w-2xl text-center">
-      <div className="mb-12 flex justify-center">
-        <Snapshot src={g.photo.src} caption={g.photo.caption} tilt={-3} className="w-56 sm:w-64" sizes="16rem" />
-      </div>
       <Reveal>
         <p className="eyebrow">Gifts</p>
         <p className="mt-5 font-display text-[1.9rem] leading-snug text-ink italic sm:text-[2.4rem]">{g.lead}</p>

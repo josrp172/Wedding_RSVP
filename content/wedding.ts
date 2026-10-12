@@ -128,15 +128,15 @@ export const wedding = {
     /** Sample soundtrack ("Beautiful Dream", mixkit.co). Starts softly when the envelope is opened. */
     music: "https://assets.mixkit.co/music/493/493.mp3",
     letterPhoto: "/photos/hk6.jpg",
-    hero: { src: "/videos/hero.mp4", portrait: "/videos/hero-portrait.mp4" },
+    hero: { src: "/videos/hero.82051f42.mp4", portrait: "/videos/hero-portrait.586ff14c.mp4" },
     /** Placeholder until the prenup shoot: the proposal itself, edited as a short film. */
     film: {
       title: "The Proposal",
       subtitle: "Hong Kong, September 2026 — the day Alvin asked. Our prenup film is coming in 2027; until then, here’s where it all began.",
       credit: "Filmed in Hong Kong · September 2026",
-      src: "/videos/film.mp4",
-      portrait: "/videos/film-portrait.mp4",
-      teaser: { src: "/videos/teaser.mp4", portrait: "/videos/teaser-portrait.mp4" },
+      src: "/videos/film.522fb566.mp4",
+      portrait: "/videos/film-portrait.203feffc.mp4",
+      teaser: { src: "/videos/teaser.e7e4c6b8.mp4", portrait: "/videos/teaser-portrait.0e9525bc.mp4" },
       /** Start times in seconds — must match the chapters baked into the film (video/src/data.ts). */
       chapters: [
         { title: "Just an ordinary photoshoot", start: 0 },
@@ -149,12 +149,12 @@ export const wedding = {
     /** Shown beside the "behind the scenes" reel. */
     momentsPhoto: { src: "/photos/camera.jpg", caption: "Official photographer" },
     moments: [
-      { caption: "Just an ordinary photoshoot…", src: "/videos/moment-1.mp4" },
-      { caption: "…or so she thought", src: "/videos/moment-2.mp4" },
-      { caption: "“Sabi ko na eh!”", src: "/videos/moment-3.mp4" },
-      { caption: "“Will you marry me?”", src: "/videos/moment-4.mp4" },
-      { caption: "“Right? Left pala!”", src: "/videos/moment-5.mp4" },
-      { caption: "“May ring ka na!!!”", src: "/videos/moment-6.mp4" },
+      { caption: "Just an ordinary photoshoot…", src: "/videos/moment-1.ca675ec0.mp4" },
+      { caption: "…or so she thought", src: "/videos/moment-2.896d6436.mp4" },
+      { caption: "“Sabi ko na eh!”", src: "/videos/moment-3.af140b7f.mp4" },
+      { caption: "“Will you marry me?”", src: "/videos/moment-4.aef92543.mp4" },
+      { caption: "“Right? Left pala!”", src: "/videos/moment-5.3203a85d.mp4" },
+      { caption: "“May ring ka na!!!”", src: "/videos/moment-6.b5000ca4.mp4" },
     ],
   },
 
@@ -320,7 +320,6 @@ export const wedding = {
   },
 
   gifts: {
-    photo: { src: "/photos/newyear.jpg", caption: "Holidays at home" },
     lead: "Your presence is the greatest gift we could ask for.",
     body: "Truly. But if you wish to bless us further, a contribution toward our first home together would be treasured. A gift box will be available at the reception, and you’re welcome to ask our coordinator for e-wallet details.",
     tradition:
