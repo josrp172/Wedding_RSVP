@@ -75,7 +75,7 @@ export const wedding = {
         date: "The beginning of us",
         title: "From chats to “us”",
         icon: "heart",
-        photo: "/photos/y2.jpg",
+        photo: "/photos/early.jpg",
         body: "One chat turned into another, and another, until they became a couple. Both families welcomed the relationship from the start — and with personalities this alike, they just fit.",
       },
       {
@@ -83,7 +83,7 @@ export const wedding = {
         date: "Sundo at hatid",
         title: "The one who always shows up",
         icon: "car",
-        photo: "/photos/y5.jpg",
+        photo: "/photos/birthday.jpg",
         body: "Nine years, and not a single breakup. Alvin has been Rheena’s constant: the daily sundo at hatid, the name on her emergency contact, the steady presence just a few streets away. Rheena has the strong personality; Alvin has the patience — and it works.",
       },
       {
@@ -91,7 +91,7 @@ export const wedding = {
         date: "Our adventures",
         title: "Roads we’ve taken",
         icon: "wave",
-        photo: "/photos/y4.jpg",
+        photo: "/photos/aurora.jpg",
         body: "Over the years they’ve explored new places together — including the waves of Aurora — sometimes with Rheena’s sister Cass along for the ride. Every trip, of course, came with one of Rheena’s famously detailed itineraries.",
       },
       {
@@ -146,6 +146,8 @@ export const wedding = {
         { title: "May ring ka na!", start: 70 },
       ],
     },
+    /** Shown beside the "behind the scenes" reel. */
+    momentsPhoto: { src: "/photos/camera.jpg", caption: "Official photographer" },
     moments: [
       { caption: "Just an ordinary photoshoot…", src: "/videos/moment-1.mp4" },
       { caption: "…or so she thought", src: "/videos/moment-2.mp4" },
@@ -159,17 +161,24 @@ export const wedding = {
   /** Photos live in /public/photos as name-700.jpg and name-1400.jpg; refer to them as "/photos/name.jpg". */
   gallery: [
     { src: "/photos/hk1.jpg", caption: "Hong Kong, September 2026" },
-    { src: "/photos/y8.jpg", caption: "Photo booth, four times over" },
+    { src: "/photos/boracay.jpg", caption: "Sun-kissed in Boracay" },
+    { src: "/photos/y2.jpg", caption: "The early days" },
+    { src: "/photos/photobooth.jpg", caption: "Eight takes, zero regrets" },
     { src: "/photos/s2.jpg", caption: "“Oo naman, yes!”" },
-    { src: "/photos/hk6.jpg", caption: "That look" },
-    { src: "/photos/y7.jpg", caption: "Canteen dates" },
+    { src: "/photos/waterfall.jpg", caption: "Chasing waterfalls" },
+    { src: "/photos/fourth.jpg", caption: "Happy 4th to us — masks and all" },
+    { src: "/photos/y8.jpg", caption: "Photo booth, four times over" },
+    { src: "/photos/fries.jpg", caption: "Kain tayo, always" },
     { src: "/photos/s3.jpg", caption: "“May ring ka na!!!”" },
     { src: "/photos/y9.jpg", caption: "Congratulations, Engineer!" },
-    { src: "/photos/hk4.jpg", caption: "Engaged" },
-    { src: "/photos/y6.jpg", caption: "Certified silly" },
-    { src: "/photos/hk8.jpg", caption: "Her favourite bridge" },
+    { src: "/photos/archery.jpg", caption: "Bullseye" },
+    { src: "/photos/camera.jpg", caption: "Official photographer since day one" },
+    { src: "/photos/beach-pose.jpg", caption: "Beach-day energy" },
+    { src: "/photos/y7.jpg", caption: "Canteen dates" },
+    { src: "/photos/silly.jpg", caption: "Certified silly" },
+    { src: "/photos/hk6.jpg", caption: "That look" },
     { src: "/photos/y3.jpg", caption: "The arcade prize" },
-    { src: "/photos/hk7.jpg", caption: "Main character energy" },
+    { src: "/photos/y6.jpg", caption: "Since forever, this silly" },
   ],
 
   /** The big scroll-to-reveal line between the letter and the story. */
@@ -229,6 +238,11 @@ export const wedding = {
     gentlemen: "Barong Tagalog, or a suit in a light or earthy tone. Tie optional.",
     ladies: "Long or midi dresses, or elegant jumpsuits in the palette below.",
     avoid: "Kindly avoid white, ivory and cream — those belong to the bride.",
+    /** Real outfits from the couple, shown as inspiration. */
+    inspo: [
+      { src: "/photos/garden-formal.jpg", caption: "Garden formal" },
+      { src: "/photos/twinning.jpg", caption: "Twinning, always" },
+    ],
     palette: [
       { name: "Blush", hex: "#E8B4BC" },
       { name: "Dusty Rose", hex: "#C98B96" },
@@ -270,6 +284,14 @@ export const wedding = {
   },
 
   travel: {
+    /** Trips the couple has taken together. */
+    getaways: [
+      { src: "/photos/boracay.jpg", caption: "Boracay" },
+      { src: "/photos/waterfall.jpg", caption: "Chasing waterfalls" },
+      { src: "/photos/beach-sunset.jpg", caption: "Golden hour" },
+      { src: "/photos/beach-pose.jpg", caption: "Beach-day energy" },
+      { src: "/photos/resort-sunset.jpg", caption: "Slow weekends" },
+    ],
     intro:
       "Tagaytay is about 1.5 to 2 hours from Metro Manila, depending on traffic. We recommend leaving early and making a day of it.",
     tips: [
@@ -298,6 +320,7 @@ export const wedding = {
   },
 
   gifts: {
+    photo: { src: "/photos/newyear.jpg", caption: "Holidays at home" },
     lead: "Your presence is the greatest gift we could ask for.",
     body: "Truly. But if you wish to bless us further, a contribution toward our first home together would be treasured. A gift box will be available at the reception, and you’re welcome to ask our coordinator for e-wallet details.",
     tradition:

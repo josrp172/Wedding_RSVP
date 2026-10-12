@@ -6,6 +6,7 @@ import { wedding } from "@/content/wedding";
 import { LazyVideo, Photo, photoUrl } from "./media";
 import { silk } from "./reveal";
 import { SectionHeading } from "./section-heading";
+import { Snapshot } from "./snapshot";
 
 /* ───────────────────────── Moments: pinned horizontal reel ───────────────────────── */
 
@@ -49,6 +50,13 @@ export function Moments() {
             <p className="mt-5 max-w-sm font-display text-lg text-white/75 italic">
               Little moments from the day he asked, in Hong Kong. Keep scrolling →
             </p>
+            <Snapshot
+              src={wedding.media.momentsPhoto.src}
+              caption={wedding.media.momentsPhoto.caption}
+              tilt={-5}
+              className="mt-8 hidden w-44 sm:block lg:w-52"
+              sizes="13rem"
+            />
           </div>
 
           {wedding.media.moments.map((m, i) => (

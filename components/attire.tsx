@@ -4,6 +4,7 @@ import { motion, useInView } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { wedding } from "@/content/wedding";
 import { Barong, Gown, Midi, Suit } from "./outfits";
+import { Snapshot } from "./snapshot";
 import { Reveal, silk } from "./reveal";
 import { SectionHeading } from "./section-heading";
 
@@ -109,7 +110,23 @@ export function Attire() {
           ))}
         </div>
 
-        <div className="mt-16 grid gap-5 md:grid-cols-[1fr_1fr_0.9fr]">
+        {/* real outfits from the couple */}
+        <div className="mt-20 flex flex-col items-center gap-10 md:flex-row md:items-center md:justify-center md:gap-14">
+          <Reveal className="max-w-xs text-center md:order-2 md:text-left">
+            <p className="eyebrow !text-[0.6rem] text-rose">From our closet</p>
+            <p className="mt-3 font-script text-5xl leading-tight text-berry">Dressed the part</p>
+            <p className="mt-3 font-display text-lg leading-relaxed text-ink-soft italic">
+              Soft colours, garden-ready shoes — and if you show up matching your plus-one, we’ll love you even more.
+            </p>
+          </Reveal>
+          <div className="flex gap-4 sm:gap-6 md:order-1">
+            {d.inspo.map((p, i) => (
+              <Snapshot key={p.src} src={p.src} caption={p.caption} tilt={i ? 4 : -4} delay={i * 0.15} className="w-[42vw] max-w-56 sm:w-56" sizes="(max-width: 640px) 42vw, 14rem" />
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-20 grid gap-5 md:grid-cols-[1fr_1fr_0.9fr]">
           {[
             { label: "For the gentlemen", text: d.gentlemen },
             { label: "For the ladies", text: d.ladies },

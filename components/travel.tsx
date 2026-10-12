@@ -6,6 +6,7 @@ import { wedding } from "@/content/wedding";
 import { mapsUrl } from "@/lib/calendar";
 import { Reveal, silk } from "./reveal";
 import { SectionHeading } from "./section-heading";
+import { Snapshot } from "./snapshot";
 
 const tipIcons = [
   <path key="car" d="M5 16h14M6 16l1.5-5h9L18 16M7 19a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM17 19a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" />,
@@ -94,6 +95,9 @@ function GiftEnvelope() {
   const g = wedding.gifts;
   return (
     <div className="mx-auto max-w-2xl text-center">
+      <div className="mb-12 flex justify-center">
+        <Snapshot src={g.photo.src} caption={g.photo.caption} tilt={-3} className="w-56 sm:w-64" sizes="16rem" />
+      </div>
       <Reveal>
         <p className="eyebrow">Gifts</p>
         <p className="mt-5 font-display text-[1.9rem] leading-snug text-ink italic sm:text-[2.4rem]">{g.lead}</p>
@@ -152,6 +156,28 @@ export function Travel() {
   return (
     <section id="travel" className="relative overflow-hidden bg-paper-deep/70 px-5 py-24 sm:py-36">
       <SectionHeading eyebrow="Travel & Stay" title="Finding your way" intro={t.intro} />
+
+      {/* the couple's favourite getaways */}
+      <div className="mt-14">
+        <Reveal className="text-center">
+          <p className="eyebrow !text-[0.6rem] text-rose">Our favourite getaways</p>
+          <p className="mt-2 font-script text-4xl text-berry sm:text-5xl">We do love a good trip</p>
+        </Reveal>
+        <div className="-mx-5 mt-8 flex snap-x snap-mandatory gap-5 overflow-x-auto px-8 pt-6 pb-10 [scrollbar-width:none] sm:justify-center sm:gap-7 [&::-webkit-scrollbar]:hidden">
+          {t.getaways.map((g, i) => (
+            <Snapshot
+              key={g.src}
+              src={g.src}
+              caption={g.caption}
+              tilt={[-4, 3, -2, 4, -3][i % 5]}
+              delay={i * 0.08}
+              className="w-48 shrink-0 snap-center sm:w-52"
+              sizes="13rem"
+            />
+          ))}
+        </div>
+        <p className="text-center font-display text-lg text-ink-soft italic">Next stop: our wedding. Here’s how to get there →</p>
+      </div>
 
       <div className="mx-auto mt-16 grid max-w-6xl gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {t.tips.map((tip, i) => (
